@@ -1,0 +1,4 @@
+# 忽略本地配置和临时文件
+*.log
+node_modules/
+.DS_Store

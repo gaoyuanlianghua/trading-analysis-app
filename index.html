@@ -4,63 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>交易信息分析</title>
+    <!-- 引入Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标库 -->
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 引入Chart.js用于数据可视化 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <!-- 引入Inter字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- 配置Tailwind自定义主题 -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#165DFF',
-                        secondary: '#36D399',
-                        danger: '#F87272',
-                        warning: '#FBBD23',
-                        dark: '#1E293B',
-                        light: '#F8FAFC'
+                        primary: '#165DFF', // 主色调：蓝色
+                        secondary: '#36D399', // 辅助色：绿色
+                        danger: '#F87272', // 危险色：红色
+                        warning: '#FBBD23', // 警告色：黄色
+                        dark: '#1E293B', // 深色文本
+                        light: '#F8FAFC' // 浅色背景
                     },
                     fontFamily: {
-                        inter: ['Inter', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'], // 设置默认字体
                     },
                 }
             }
         }
     </script>
     
+    <!-- 自定义工具类 -->
     <style type="text/tailwindcss">
         @layer utilities {
             .content-auto {
                 content-visibility: auto;
             }
             .scrollbar-hide::-webkit-scrollbar {
-                display: none;
+                display: none; // 隐藏滚动条
             }
             .scrollbar-hide {
                 -ms-overflow-style: none;
                 scrollbar-width: none;
             }
             .card-shadow {
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); // 卡片阴影
             }
             .gradient-bg {
-                background: linear-gradient(135deg, #165DFF 0%, #0A2463 100%);
+                background: linear-gradient(135deg, #165DFF 0%, #0A2463 100%); // 渐变背景
             }
             .text-balance {
-                text-wrap: balance;
+                text-wrap: balance; // 文本平衡排列
             }
             .favorite-active {
-                color: #FFD700;
-                animation: pulse 0.5s ease-in-out;
+                color: #FFD700; // 收藏激活状态颜色
+                animation: pulse 0.5s ease-in-out; // 添加脉冲动画
             }
             .api-connected {
-                border-color: #36D399;
-                box-shadow: 0 0 0 2px rgba(54, 211, 153, 0.2);
+                border-color: #36D399; // API连接成功边框颜色
+                box-shadow: 0 0 0 2px rgba(54, 211, 153, 0.2); // API连接成功阴影
             }
             .slide-up {
-                animation: slideUp 0.3s ease-out forwards;
+                animation: slideUp 0.3s ease-out forwards; // 上滑动画
             }
+            // 定义动画
             @keyframes slideUp {
                 from { transform: translateY(100%); opacity: 0; }
                 to { transform: translateY(0); opacity: 1; }
@@ -82,10 +89,10 @@
             </div>
             <div class="flex items-center space-x-4">
                 <button id="refresh-btn" class="p-2 rounded-full hover:bg-white/20 transition-all">
-                    <i class="fa fa-refresh"></i>
+                    <i class="fa fa-refresh"></i> <!-- 刷新按钮 -->
                 </button>
                 <button id="settings-btn" class="p-2 rounded-full hover:bg-white/20 transition-all">
-                    <i class="fa fa-cog"></i>
+                    <i class="fa fa-cog"></i> <!-- 设置按钮 -->
                 </button>
             </div>
         </div>
@@ -97,7 +104,7 @@
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-semibold">交易平台API配置</h3>
                 <button id="close-modal" class="text-gray-400 hover:text-gray-600">
-                    <i class="fa fa-times"></i>
+                    <i class="fa fa-times"></i> <!-- 关闭按钮 -->
                 </button>
             </div>
             
@@ -147,7 +154,7 @@
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-semibold" id="trade-stock-name">交易操作</h3>
                 <button id="close-trade-modal" class="text-gray-400 hover:text-gray-600">
-                    <i class="fa fa-times"></i>
+                    <i class="fa fa-times"></i> <!-- 关闭按钮 -->
                 </button>
             </div>
             
@@ -350,7 +357,7 @@
     </div>
 
     <script>
-        // 模拟数据
+        // 模拟股票数据
         const mockStocks = [
             {
                 code: "000001",
@@ -360,11 +367,11 @@
                 changePercent: 2.09,
                 avgPrice120: 14.87,
                 minPrice120: 13.25,
-                concentration90: 0.15,
-                concentration70: 0.08,
-                priceHistory: generateRandomPrices(120, 13, 17),
-                chipDistribution: generateChipDistribution(),
-                favorite: false
+                concentration90: 0.15,  // 90%筹码集中度
+                concentration70: 0.08,  // 70%筹码集中度
+                priceHistory: generateRandomPrices(120, 13, 17),  // 120天价格历史
+                chipDistribution: generateChipDistribution(),  // 筹码分布数据
+                favorite: false  // 是否收藏
             },
             {
                 code: "000002",
@@ -380,51 +387,10 @@
                 chipDistribution: generateChipDistribution(),
                 favorite: true
             },
-            {
-                code: "000004",
-                name: "国华网安",
-                price: 10.36,
-                change: 0.52,
-                changePercent: 5.27,
-                avgPrice120: 9.85,
-                minPrice120: 7.62,
-                concentration90: 0.12,
-                concentration70: 0.05,
-                priceHistory: generateRandomPrices(120, 7, 11),
-                chipDistribution: generateChipDistribution(),
-                favorite: false
-            },
-            {
-                code: "000005",
-                name: "世纪星源",
-                price: 3.82,
-                change: -0.05,
-                changePercent: -1.29,
-                avgPrice120: 3.65,
-                minPrice120: 3.12,
-                concentration90: 0.22,
-                concentration70: 0.13,
-                priceHistory: generateRandomPrices(120, 3, 4),
-                chipDistribution: generateChipDistribution(),
-                favorite: true
-            },
-            {
-                code: "000006",
-                name: "深振业A",
-                price: 5.73,
-                change: 0.12,
-                changePercent: 2.14,
-                avgPrice120: 5.58,
-                minPrice120: 4.87,
-                concentration90: 0.16,
-                concentration70: 0.09,
-                priceHistory: generateRandomPrices(120, 4.5, 6),
-                chipDistribution: generateChipDistribution(),
-                favorite: false
-            }
+            // 其他模拟股票数据...
         ];
 
-        // API配置
+        // API配置对象
         let apiConfig = {
             platform: 'demo',
             key: '',
@@ -435,10 +401,10 @@
 
         // 当前选中的股票
         let selectedStock = null;
-        // 当前交易类型
+        // 当前交易类型（买入/卖出）
         let currentTradeType = 'buy';
 
-        // 生成随机价格数据
+        // 生成随机价格数据（用于模拟）
         function generateRandomPrices(days, min, max) {
             const prices = [];
             let price = min + (max - min) * Math.random();
@@ -452,14 +418,15 @@
             return prices;
         }
 
-        // 生成筹码分布数据
+        // 生成筹码分布数据（正态分布）
         function generateChipDistribution() {
             const distribution = [];
-            const center = 0.5 + (Math.random() - 0.5) * 0.2;
-            const spread = 0.2 + Math.random() * 0.3;
+            const center = 0.5 + (Math.random() - 0.5) * 0.2;  // 分布中心
+            const spread = 0.2 + Math.random() * 0.3;  // 分布宽度
             
             for (let i = 0; i <= 100; i++) {
                 const x = i / 100;
+                // 正态分布函数
                 const value = Math.exp(-Math.pow(x - center, 2) / (2 * Math.pow(spread, 2)));
                 distribution.push(value * 100);
             }
@@ -467,18 +434,19 @@
             return distribution;
         }
 
-        // 初始化页面
+        // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 加载API配置
+            // 加载API配置（从本地存储）
             loadApiConfig();
             updateApiStatus();
             
+            // 渲染股票列表
             renderStockList(mockStocks);
             document.getElementById('stock-count').textContent = `${mockStocks.length} 只股票`;
             
             // 刷新按钮事件
             document.getElementById('refresh-btn').addEventListener('click', function() {
-                this.classList.add('animate-spin');
+                this.classList.add('animate-spin');  // 添加旋转动画
                 fetchStockData().then(() => {
                     this.classList.remove('animate-spin');
                     renderStockList(mockStocks);
@@ -491,22 +459,23 @@
             
             // 排序选择事件
             document.getElementById('sort-select').addEventListener('change', function() {
-                sortStocks(this.value);
+                sortStocks(this.value);  // 根据选择的排序方式排序股票
             });
             
-            // 搜索事件
+            // 搜索功能
             document.getElementById('search-input').addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
                 const filteredStocks = mockStocks.filter(stock => 
                     stock.code.toLowerCase().includes(searchTerm) || 
                     stock.name.toLowerCase().includes(searchTerm)
                 );
-                renderStockList(filteredStocks);
+                renderStockList(filteredStocks);  // 渲染搜索结果
             });
             
-            // 周期按钮事件
+            // 周期按钮事件（日K/周K/月K）
             document.querySelectorAll('.period-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
+                    // 更新按钮样式
                     document.querySelectorAll('.period-btn').forEach(b => {
                         b.classList.remove('bg-primary/10', 'text-primary');
                         b.classList.add('bg-gray-100', 'text-gray-500');
@@ -518,16 +487,16 @@
             
             // 自选股标签页切换
             document.getElementById('all-stocks-tab').addEventListener('click', function() {
-                showAllStocks();
+                showAllStocks();  // 显示全部股票
             });
             
             document.getElementById('favorites-tab').addEventListener('click', function() {
-                showFavorites();
+                showFavorites();  // 显示自选股票
             });
             
-            // API配置按钮事件
+            // API配置相关事件
             document.getElementById('connect-api').addEventListener('click', function() {
-                openApiConfigModal();
+                openApiConfigModal();  // 打开API配置模态框
             });
             
             document.getElementById('settings-btn').addEventListener('click', function() {
@@ -562,7 +531,7 @@
                 
                 if (!selectedStock) return;
                 
-                openTradeModal('buy');
+                openTradeModal('buy');  // 打开买入模态框
             });
             
             document.getElementById('sell-btn').addEventListener('click', function() {
@@ -574,14 +543,15 @@
                 
                 if (!selectedStock) return;
                 
-                openTradeModal('sell');
+                openTradeModal('sell');  // 打开卖出模态框
             });
             
-            // 交易类型切换
+            // 交易类型切换（买入/卖出）
             document.querySelectorAll('.trade-type-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     currentTradeType = this.dataset.type;
                     
+                    // 更新按钮样式
                     document.querySelectorAll('.trade-type-btn').forEach(b => {
                         b.classList.remove('bg-primary', 'text-white');
                         b.classList.add('bg-gray-200', 'text-gray-700');
@@ -590,7 +560,7 @@
                     this.classList.remove('bg-gray-200', 'text-gray-700');
                     this.classList.add('bg-primary', 'text-white');
                     
-                    // 更新按钮文本
+                    // 更新提交按钮文本
                     const submitBtn = document.getElementById('submit-trade');
                     submitBtn.innerHTML = currentTradeType === 'buy' 
                         ? '<i class="fa fa-shopping-cart mr-2"></i> 确认买入' 
@@ -601,7 +571,7 @@
             // 提交交易
             document.getElementById('trade-form').addEventListener('submit', function(e) {
                 e.preventDefault();
-                submitTrade();
+                submitTrade();  // 处理交易提交
             });
             
             // 关闭交易模态框
@@ -612,24 +582,24 @@
             // 初始化显示全部股票
             showAllStocks();
             
-            // 监听存储变化事件
+            // 监听存储变化事件（用于多窗口同步自选股）
             window.addEventListener('storage', function(e) {
                 if (e.key === 'favorites') {
-                    updateFavorites();
+                    updateFavorites();  // 更新自选股列表
                 }
             });
         });
 
-        // 从API获取股票数据
+        // 从API获取股票数据（模拟）
         async function fetchStockData() {
-            // 如果没有连接API，使用模拟数据
+            // 如果没有连接API或使用Demo平台，使用模拟数据
             if (!apiConfig.connected || apiConfig.platform === 'demo') {
                 return new Promise(resolve => setTimeout(resolve, 800));
             }
             
             // 实际应用中这里应该调用真实的API
             try {
-                // 模拟API请求
+                // 模拟API请求延迟
                 return new Promise(resolve => setTimeout(resolve, 800));
             } catch (error) {
                 console.error('获取股票数据失败:', error);
@@ -643,6 +613,7 @@
             stockListEl.innerHTML = '';
             
             if (stocks.length === 0) {
+                // 无搜索结果时显示提示
                 stockListEl.innerHTML = `
                     <div class="flex items-center justify-center h-24 text-gray-400">
                         <i class="fa fa-search-minus mr-2"></i> 没有找到匹配的股票
@@ -651,15 +622,17 @@
                 return;
             }
             
+            // 遍历股票数据并渲染
             stocks.forEach(stock => {
                 const stockItem = document.createElement('div');
                 stockItem.className = 'bg-white rounded-xl p-4 card-shadow hover:shadow-lg transition-shadow cursor-pointer';
                 stockItem.dataset.code = stock.code;
                 
-                // 计算价格与120日最低价格的关系
+                // 计算价格与120日最低价格的偏离度
                 const priceDiff = stock.price - (stock.minPrice120 - stock.minPrice120 * stock.concentration90);
                 const diffPercent = ((priceDiff / stock.price) * 100).toFixed(2);
                 
+                // 构建股票卡片HTML
                 stockItem.innerHTML = `
                     <div class="flex justify-between items-center">
                         <div>
@@ -669,4 +642,44 @@
                         <div class="flex items-center space-x-2">
                             <div class="text-right">
                                 <p class="text-lg font-bold ${stock.change >= 0 ? 'text-danger' : 'text-secondary'}">${stock.price}</p>
-                                <p class="text-xs ${stock.change >= 0 ?
+                                <p class="text-xs ${stock.change >= 0 ? 'text-danger' : 'text-secondary'}">
+                                    ${stock.change >= 0 ? '+' : ''}${stock.change} (${stock.changePercent}%)
+                                </p>
+                            </div>
+                            <button class="favorite-btn p-2 rounded-full hover:bg-gray-100 transition-all" data-code="${stock.code}">
+                                <i class="fa fa-star-o text-xl ${stock.favorite ? 'text-yellow-400 favorite-active' : ''}"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+                        <div>
+                            <p class="text-xs text-gray-500">120日均价</p>
+                            <p class="text-sm">${stock.avgPrice120}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">90%筹码</p>
+                            <p class="text-sm">${(stock.concentration90 * 100).toFixed(1)}%</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">偏离度</p>
+                            <p class="text-sm ${priceDiff >= 0 ? 'text-danger' : 'text-secondary'}">${priceDiff >= 0 ? '+' : ''}${diffPercent}%</p>
+                        </div>
+                    </div>
+                `;
+                
+                // 点击股票卡片显示详情
+                stockItem.addEventListener('click', function() {
+                    showStockDetail(stock);
+                });
+                
+                // 添加收藏按钮事件
+                const favoriteBtn = stockItem.querySelector('.favorite-btn');
+                favoriteBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();  // 阻止事件冒泡到卡片
+                    toggleFavorite(stock.code);  // 切换收藏状态
+                });
+                
+                // 添加到列表
+                stockListEl.appendChild(stockItem);
+            });
+        }
